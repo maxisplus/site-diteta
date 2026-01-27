@@ -27,8 +27,9 @@ const CHECKOUT_URLS = {
 };
 
 // Credenciais da API Cakto
-const CAKTO_CLIENT_ID = 'xFxqzMyHWAXGsWtoyE4WVng0chgaUpgiZBhQk8Fc';
-const CAKTO_API_URL = 'https://api.cakto.com.br'; // Ajustar conforme documentação
+const CAKTO_CLIENT_ID = process.env.CAKTO_CLIENT_ID || 'xFxqzMyHWAXGsWtoyE4WVng0chgaUpgiZBhQk8Fc';
+const CAKTO_CLIENT_SECRET = process.env.CAKTO_CLIENT_SECRET;
+const CAKTO_API_URL = process.env.CAKTO_API_URL || 'https://api.cakto.com.br';
 
 interface CheckoutSuccessResponse {
   success: true;
@@ -52,48 +53,91 @@ type CheckoutResponse = CheckoutSuccessResponse | CheckoutErrorResponse;
 
 /**
  * Cria um checkout com split usando a API do Cakto
+ * 
+ * IMPORTANTE: Ajustar conforme a documentação oficial da API do Cakto
+ * A implementação abaixo é um exemplo baseado em padrões comuns de APIs de pagamento
  */
 async function createCaktoSplitCheckout(
   plan: PlanType,
   amount: number
 ): Promise<string> {
   try {
-    // TODO: Implementar chamada real à API do Cakto
-    // Por enquanto, retorna a URL direta do Cakto
-    
-    // Exemplo de como seria a chamada (ajustar conforme documentação):
-    /*
-    const response = await fetch(`${CAKTO_API_URL}/checkouts`, {
+    // Verificar se temos as credenciais necessárias
+    if (!CAKTO_CLIENT_SECRET) {
+      console.warn('⚠️ CAKTO_CLIENT_SECRET não configurado. Usando URL direta como fallback.');
+      return CHECKOUT_URLS.cakto[plan];
+    }
+
+    // Calcular valores do split (50% cada)
+    const hublaAmount = Math.round(amount * 0.5);
+    const caktoAmount = Math.round(amount * 0.5);
+
+    // Autenticar na API do Cakto (ajustar conforme documentação)
+    // Exemplo de autenticação OAuth2:
+    const authResponse = await fetch(`${CAKTO_API_URL}/oauth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${CAKTO_CLIENT_ID}`,
+      },
+      body: JSON.stringify({
+        client_id: CAKTO_CLIENT_ID,
+        client_secret: CAKTO_CLIENT_SECRET,
+        grant_type: 'client_credentials',
+      }),
+    });
+
+    if (!authResponse.ok) {
+      throw new Error('Falha na autenticação com Cakto API');
+    }
+
+    const authData = await authResponse.json();
+    const accessToken = authData.access_token;
+
+    // Criar checkout com split (ajustar endpoint e payload conforme documentação)
+    const checkoutResponse = await fetch(`${CAKTO_API_URL}/checkouts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         amount: amount,
-        split: {
-          hubla: {
-            percentage: 50,
-            amount: amount * 0.5,
-          },
-          cakto: {
-            percentage: 50,
-            amount: amount * 0.5,
-          },
+        currency: 'BRL',
+        plan_type: plan,
+        split_payment: {
+          enabled: true,
+          recipients: [
+            {
+              recipient: 'hubla', // ID ou identificador do recebedor Hubla
+              percentage: 50,
+              amount: hublaAmount,
+            },
+            {
+              recipient: 'cakto', // ID ou identificador do recebedor Cakto
+              percentage: 50,
+              amount: caktoAmount,
+            },
+          ],
         },
-        plan: plan,
+        return_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/success`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/checkout/cancel`,
       }),
     });
+
+    if (!checkoutResponse.ok) {
+      const errorData = await checkoutResponse.json().catch(() => ({}));
+      throw new Error(`Erro ao criar checkout: ${JSON.stringify(errorData)}`);
+    }
+
+    const checkoutData = await checkoutResponse.json();
     
-    const data = await response.json();
-    return data.checkout_url;
-    */
-    
-    // Por enquanto, retorna URL direta do Cakto
-    return CHECKOUT_URLS.cakto[plan];
+    // Retornar URL do checkout (ajustar conforme resposta da API)
+    return checkoutData.checkout_url || checkoutData.url || CHECKOUT_URLS.cakto[plan];
+
   } catch (error) {
     console.error('Erro ao criar checkout Cakto:', error);
-    throw error;
+    // Fallback: retorna URL direta do Cakto
+    return CHECKOUT_URLS.cakto[plan];
   }
 }
 
