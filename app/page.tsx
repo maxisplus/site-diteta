@@ -352,10 +352,17 @@ export default function VendasPage() {
   };
 
   const handleCheckout = (plan: 'annual' | 'monthly') => {
-    // Abre Hubla em nova aba
-    window.open(CHECKOUT_URLS.hubla[plan], '_blank');
-    // Abre Cakto em nova aba
-    window.open(CHECKOUT_URLS.cakto[plan], '_blank');
+    // Divide o pagamento 50% Hubla e 50% Cakto
+    // Usa um número aleatório para distribuir 50/50
+    const random = Math.random();
+    
+    if (random < 0.5) {
+      // 50% vai para Hubla
+      window.location.href = CHECKOUT_URLS.hubla[plan];
+    } else {
+      // 50% vai para Cakto
+      window.location.href = CHECKOUT_URLS.cakto[plan];
+    }
   };
 
   return (
