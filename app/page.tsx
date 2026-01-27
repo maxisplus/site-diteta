@@ -3,10 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-// URLs de checkout Hubla
+// URLs de checkout - Split 50% Hubla e 50% Cakto
 const CHECKOUT_URLS = {
-  annual: 'https://pay.hub.la/9uz9SIpLP3pZ0f12ydsD',
-  monthly: 'https://pay.hub.la/QnE0thkRCtKbXLmS5yPy',
+  hubla: {
+    annual: 'https://pay.hub.la/9uz9SIpLP3pZ0f12ydsD',
+    monthly: 'https://pay.hub.la/QnE0thkRCtKbXLmS5yPy',
+  },
+  cakto: {
+    annual: 'https://pay.cakto.com.br/kvar8c2_742083',
+    monthly: 'https://pay.cakto.com.br/bigpf3i',
+  },
 };
 
 // Links WhatsApp
@@ -345,8 +351,32 @@ export default function VendasPage() {
     plansRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleCheckout = (plan: 'annual' | 'monthly') => {
-    window.location.href = CHECKOUT_URLS[plan];
+  const handleCheckout = async (plan: 'annual' | 'monthly') => {
+    try {
+      // Chama a API para criar checkout com split 50/50
+      const response = await fetch('/api/checkout-split', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redireciona para o checkout criado pela API
+        window.location.href = data.checkout_url;
+      } else {
+        console.error('Erro ao criar checkout:', data.error);
+        // Fallback: redireciona para Cakto
+        window.location.href = CHECKOUT_URLS.cakto[plan];
+      }
+    } catch (error) {
+      console.error('Erro ao processar checkout:', error);
+      // Fallback: redireciona para Cakto
+      window.location.href = CHECKOUT_URLS.cakto[plan];
+    }
   };
 
   return (
@@ -481,7 +511,7 @@ export default function VendasPage() {
                 className="w-full h-auto"
                 style={{ maxHeight: '65vh' }}
               >
-                <source src="/Video_Dieta_Calculada-1.mp4" type="video/mp4" />
+                <source src="https://storage.googleapis.com/maxisplus_web/Video_Dieta_Calculada-1.mp4" type="video/mp4" />
               </video>
             </div>
           </div>
