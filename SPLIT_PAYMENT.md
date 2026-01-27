@@ -11,7 +11,7 @@ Este projeto implementa um sistema de split de pagamento que divide 50% do valor
 Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
 
 ```env
-CAKTO_CLIENT_ID=xFxqzMyHWAXGsWtoyE4WVng0chgaUpgiZBhQk8Fc
+CAKTO_CLIENT_ID=seu_client_id_aqui
 CAKTO_CLIENT_SECRET=seu_client_secret_aqui
 CAKTO_API_URL=https://api.cakto.com.br
 
@@ -21,7 +21,7 @@ NEXT_PUBLIC_BASE_URL=https://seu-dominio.com
 ### 2. Credenciais da API Cakto
 
 Você precisa:
-- **Client ID**: `xFxqzMyHWAXGsWtoyE4WVng0chgaUpgiZBhQk8Fc` ✅ (já configurado)
+- **Client ID**: Obtenha no painel do Cakto (seção "Chaves de API")
 - **Client Secret**: Obtenha no painel do Cakto (seção "Chaves de API")
 - **API URL**: URL base da API do Cakto
 

@@ -27,7 +27,7 @@ const CHECKOUT_URLS = {
 };
 
 // Credenciais da API Cakto
-const CAKTO_CLIENT_ID = process.env.CAKTO_CLIENT_ID || 'xFxqzMyHWAXGsWtoyE4WVng0chgaUpgiZBhQk8Fc';
+const CAKTO_CLIENT_ID = process.env.CAKTO_CLIENT_ID;
 const CAKTO_CLIENT_SECRET = process.env.CAKTO_CLIENT_SECRET;
 const CAKTO_API_URL = process.env.CAKTO_API_URL || 'https://api.cakto.com.br';
 
