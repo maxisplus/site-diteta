@@ -3,10 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-// URLs de checkout Hubla
+// URLs de checkout - Split 50% Hubla e 50% Cakto
 const CHECKOUT_URLS = {
-  annual: 'https://pay.hub.la/9uz9SIpLP3pZ0f12ydsD',
-  monthly: 'https://pay.hub.la/QnE0thkRCtKbXLmS5yPy',
+  hubla: {
+    annual: 'https://pay.hub.la/9uz9SIpLP3pZ0f12ydsD',
+    monthly: 'https://pay.hub.la/QnE0thkRCtKbXLmS5yPy',
+  },
+  cakto: {
+    annual: 'https://pay.cakto.com.br/kvar8c2_742083',
+    monthly: 'https://pay.cakto.com.br/bigpf3i',
+  },
 };
 
 // Links WhatsApp
@@ -346,7 +352,10 @@ export default function VendasPage() {
   };
 
   const handleCheckout = (plan: 'annual' | 'monthly') => {
-    window.location.href = CHECKOUT_URLS[plan];
+    // Abre Hubla em nova aba
+    window.open(CHECKOUT_URLS.hubla[plan], '_blank');
+    // Abre Cakto em nova aba
+    window.open(CHECKOUT_URLS.cakto[plan], '_blank');
   };
 
   return (
