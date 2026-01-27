@@ -351,16 +351,30 @@ export default function VendasPage() {
     plansRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleCheckout = (plan: 'annual' | 'monthly') => {
-    // Divide o pagamento 50% Hubla e 50% Cakto
-    // Usa um número aleatório para distribuir 50/50
-    const random = Math.random();
-    
-    if (random < 0.5) {
-      // 50% vai para Hubla
-      window.location.href = CHECKOUT_URLS.hubla[plan];
-    } else {
-      // 50% vai para Cakto
+  const handleCheckout = async (plan: 'annual' | 'monthly') => {
+    try {
+      // Chama a API para criar checkout com split 50/50
+      const response = await fetch('/api/checkout-split', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redireciona para o checkout criado pela API
+        window.location.href = data.checkout_url;
+      } else {
+        console.error('Erro ao criar checkout:', data.error);
+        // Fallback: redireciona para Cakto
+        window.location.href = CHECKOUT_URLS.cakto[plan];
+      }
+    } catch (error) {
+      console.error('Erro ao processar checkout:', error);
+      // Fallback: redireciona para Cakto
       window.location.href = CHECKOUT_URLS.cakto[plan];
     }
   };
