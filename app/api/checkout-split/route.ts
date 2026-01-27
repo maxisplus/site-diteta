@@ -153,7 +153,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const totalAmount = PLAN_VALUES[plan];
+    const typedPlan = plan as PlanType;
+    const totalAmount = PLAN_VALUES[typedPlan];
     const hublaAmount = Math.round(totalAmount * 0.5);
     const caktoAmount = Math.round(totalAmount * 0.5);
 

@@ -511,7 +511,7 @@ export default function VendasPage() {
                 className="w-full h-auto"
                 style={{ maxHeight: '65vh' }}
               >
-                <source src="/Video_Dieta_Calculada-1.mp4" type="video/mp4" />
+                <source src="https://storage.googleapis.com/maxisplus_web/Video_Dieta_Calculada-1.mp4" type="video/mp4" />
               </video>
             </div>
           </div>
