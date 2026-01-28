@@ -3,15 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-// URLs de checkout - Split 50% Hubla e 50% Cakto
+// URLs de checkout - 100% Hubla
 const CHECKOUT_URLS = {
   hubla: {
     annual: 'https://pay.hub.la/9uz9SIpLP3pZ0f12ydsD',
     monthly: 'https://pay.hub.la/QnE0thkRCtKbXLmS5yPy',
-  },
-  cakto: {
-    annual: 'https://pay.cakto.com.br/kvar8c2_742083',
-    monthly: 'https://pay.cakto.com.br/bigpf3i',
   },
 };
 
@@ -353,7 +349,7 @@ export default function VendasPage() {
 
   const handleCheckout = async (plan: 'annual' | 'monthly') => {
     try {
-      // Chama a API para criar checkout com split 50/50
+      // Chama a API para obter a URL do checkout (Hubla)
       const response = await fetch('/api/checkout-split', {
         method: 'POST',
         headers: {
@@ -369,13 +365,13 @@ export default function VendasPage() {
         window.location.href = data.checkout_url;
       } else {
         console.error('Erro ao criar checkout:', data.error);
-        // Fallback: redireciona para Cakto
-        window.location.href = CHECKOUT_URLS.cakto[plan];
+        // Fallback: redireciona para Hubla
+        window.location.href = CHECKOUT_URLS.hubla[plan];
       }
     } catch (error) {
       console.error('Erro ao processar checkout:', error);
-      // Fallback: redireciona para Cakto
-      window.location.href = CHECKOUT_URLS.cakto[plan];
+      // Fallback: redireciona para Hubla
+      window.location.href = CHECKOUT_URLS.hubla[plan];
     }
   };
 
@@ -662,9 +658,9 @@ export default function VendasPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
                     <span className="text-[16px] text-gray-400">12x de</span>
-                    <span className="text-[42px] md:text-[52px] font-extrabold text-[#FF911A]">R$ 10,24</span>
+                    <span className="text-[42px] md:text-[52px] font-extrabold text-[#FF911A]">R$ 11,37</span>
                   </div>
-                  <p className="text-[14px] text-gray-500">ou R$ 99,90 à vista</p>
+                  <p className="text-[14px] text-gray-500">ou R$ 109,90 à vista</p>
                 </div>
 
                 {/* Badge Economia */}
@@ -716,7 +712,7 @@ export default function VendasPage() {
                 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[42px] md:text-[52px] font-extrabold text-white">R$ 27,90</span>
+                    <span className="text-[42px] md:text-[52px] font-extrabold text-white">R$ 30,90</span>
                     <span className="text-[16px] text-gray-400">/mês</span>
                   </div>
                   <p className="text-[14px] text-gray-500">Pagamento mensal recorrente</p>
