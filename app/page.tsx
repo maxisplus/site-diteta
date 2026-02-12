@@ -115,23 +115,14 @@ function MenuMobile() {
   };
 
   return (
-    <>
+    <div className="relative">
+      {/* Botão hambúrguer */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
         aria-label="Menu"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-gray-700"
-        >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
           {isOpen ? (
             <path d="M18 6L6 18M6 6l12 12" />
           ) : (
@@ -140,42 +131,40 @@ function MenuMobile() {
         </svg>
       </button>
 
+      {/* Menu dropdown */}
       {isOpen && (
         <>
+          {/* Overlay para fechar ao clicar fora */}
           <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 z-30"
             onClick={() => setIsOpen(false)}
           />
-          <div className="fixed top-[85px] left-0 right-0 bg-white border-b border-gray-200 shadow-xl z-50 md:hidden">
-            <nav className="flex flex-col py-4">
+          
+          {/* Dropdown do menu */}
+          <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-200 z-40 overflow-hidden">
+            <nav className="py-2">
               {menuItems.map((item) => (
-                <a
+                <button
                   key={item.id}
-                  href={`#${item.id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleClick(item.id);
-                  }}
-                  className="px-6 py-3 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#FF911A] transition-colors"
+                  onClick={() => handleClick(item.id)}
+                  className="w-full text-left px-4 py-3 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#FF911A] transition-colors"
                 >
                   {item.label}
-                </a>
+                </button>
               ))}
-              <a
-                href="#planos"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleClick('planos');
-                }}
-                className="mx-6 mt-2 bg-[#FF911A] hover:bg-[#e87f0f] text-white font-bold text-[15px] px-6 py-3 rounded-full text-center transition-colors"
-              >
-                Começar Agora
-              </a>
+              <div className="px-3 pt-2 pb-3 border-t border-gray-100 mt-2">
+                <button
+                  onClick={() => handleClick('planos')}
+                  className="w-full bg-[#FF911A] hover:bg-[#e87f0f] text-white font-bold text-[14px] px-4 py-2.5 rounded-full text-center transition-colors"
+                >
+                  Começar Agora
+                </button>
+              </div>
             </nav>
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 
@@ -212,6 +201,7 @@ function FAQItem({ item, isOpen, onClick }: { item: typeof FAQ_ITEMS[0]; isOpen:
           )}
         </p>
       </div>
+
     </div>
   );
 }
@@ -340,14 +330,13 @@ function YouTubeCarousel({ videos }: { videos: string[] }) {
 
 export default function VendasPage() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<'annual' | 'monthly'>('annual');
   const plansRef = useRef<HTMLDivElement>(null);
 
   const scrollToPlans = () => {
     plansRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleCheckout = async (plan: 'annual' | 'monthly') => {
+  const handleCheckout = async (plan: 'annual') => {
     try {
       // Chama a API para obter a URL do checkout (Hubla)
       const response = await fetch('/api/checkout-split', {
@@ -609,27 +598,19 @@ export default function VendasPage() {
           <div className="text-center mb-12 md:mb-16">
             <span className="inline-flex items-center gap-2 bg-[#FF911A]/20 text-[#FF911A] font-bold text-sm uppercase tracking-wider mb-3 px-4 py-2 rounded-full">
               <span className="w-2 h-2 bg-[#FF911A] rounded-full" />
-              Planos
+              Assinatura Dieta Calculada
             </span>
             <h2 className="text-[28px] md:text-[42px] font-extrabold text-white mb-4">
-              Escolha seu plano e <span className="text-[#FF911A]">comece hoje</span>
+              Tenha sua alimentação <span className="text-[#FF911A]">100% calculada</span> o ano inteiro
             </h2>
             <p className="text-[15px] md:text-[18px] text-gray-400 max-w-2xl mx-auto">
-              Comece sua jornada de transformação agora mesmo
+              Acesso completo ao Dieta Calculada por 12 meses para você controlar calorias e macros de forma simples, rápida e sem planilhas.
             </p>
           </div>
 
-          {/* Plans Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {/* Plano Anual */}
-            <div
-              onClick={() => setSelectedPlan('annual')}
-              className={`relative bg-gray-800 rounded-3xl p-6 md:p-8 cursor-pointer transition-all duration-300 border-2 ${
-                selectedPlan === 'annual'
-                  ? 'border-[#FF911A] shadow-lg shadow-[#FF911A]/20'
-                  : 'border-gray-700 hover:border-gray-600'
-              }`}
-            >
+          {/* Plano Anual Único */}
+          <div className="max-w-xl mx-auto">
+            <div className="relative bg-gray-800 rounded-3xl p-6 md:p-8 border-2 border-[#FF911A] shadow-lg shadow-[#FF911A]/20">
               {/* Badge Mais Popular */}
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-[#FF911A] to-orange-500 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wide">
@@ -637,89 +618,30 @@ export default function VendasPage() {
                 </span>
               </div>
 
-              {/* Radio Indicator */}
-              <div className="absolute top-6 right-6">
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                  selectedPlan === 'annual'
-                    ? 'border-[#FF911A] bg-[#FF911A]'
-                    : 'border-gray-600'
-                }`}>
-                  {selectedPlan === 'annual' && (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                      <path d="M5 12l5 5L19 7"/>
-                    </svg>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <h3 className="text-[20px] md:text-[24px] font-bold text-white mb-2">Plano Anual</h3>
+              <div className="mt-6">
+                <h3 className="text-[20px] md:text-[24px] font-bold text-white mb-2">Plano Anual Dieta Calculada</h3>
                 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
                     <span className="text-[16px] text-gray-400">12x de</span>
                     <span className="text-[42px] md:text-[52px] font-extrabold text-[#FF911A]">R$ 11,37</span>
                   </div>
-                  <p className="text-[14px] text-gray-500">ou R$ 109,90 à vista</p>
+                  <p className="text-[14px] text-gray-500">ou R$ 109,90 à vista para 1 ano de acesso</p>
                 </div>
 
                 {/* Badge Economia */}
                 <div className="inline-block bg-green-500/20 text-green-400 px-4 py-2 rounded-full text-[13px] font-bold mb-6">
-                  💰 Economize R$ 234,90 no ano!
+                  💰 Menos de R$ 0,40 por dia para ter suas refeições calculadas.
                 </div>
 
-                <ul className="space-y-3">
-                  {['Acesso completo por 12 meses', 'Suporte prioritário', 'Todas as atualizações incluídas'].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-[14px] text-gray-300">
-                      <div className="w-5 h-5 rounded-full bg-[#FF911A]/20 flex items-center justify-center flex-shrink-0">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FF911A" strokeWidth="3">
-                          <path d="M5 12l5 5L19 7"/>
-                        </svg>
-                      </div>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Plano Mensal */}
-            <div
-              onClick={() => setSelectedPlan('monthly')}
-              className={`relative bg-gray-800 rounded-3xl p-6 md:p-8 cursor-pointer transition-all duration-300 border-2 ${
-                selectedPlan === 'monthly'
-                  ? 'border-[#FF911A] shadow-lg shadow-[#FF911A]/20'
-                  : 'border-gray-700 hover:border-gray-600'
-              }`}
-            >
-              {/* Radio Indicator */}
-              <div className="absolute top-6 right-6">
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                  selectedPlan === 'monthly'
-                    ? 'border-[#FF911A] bg-[#FF911A]'
-                    : 'border-gray-600'
-                }`}>
-                  {selectedPlan === 'monthly' && (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                      <path d="M5 12l5 5L19 7"/>
-                    </svg>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[20px] md:text-[24px] font-bold text-white mb-2">Plano Mensal</h3>
-                
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-[42px] md:text-[52px] font-extrabold text-white">R$ 30,90</span>
-                    <span className="text-[16px] text-gray-400">/mês</span>
-                  </div>
-                  <p className="text-[14px] text-gray-500">Pagamento mensal recorrente</p>
-                </div>
-
-                <ul className="space-y-3 mt-[52px]">
-                  {['Acesso completo por 1 mês', 'Suporte prioritário', 'Todas as atualizações incluídas'].map((item, i) => (
+                <ul className="space-y-3 mt-4">
+                  {[
+                    'Acesso ilimitado ao Dieta Calculada por 12 meses',
+                    'Análise automática das suas refeições por foto, em segundos',
+                    'Acompanhamento de calorias e macronutrientes sem planilhas',
+                    'Suporte prioritário pelo WhatsApp',
+                    'Todas as atualizações e melhorias incluídas durante o período'
+                  ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-[14px] text-gray-300">
                       <div className="w-5 h-5 rounded-full bg-[#FF911A]/20 flex items-center justify-center flex-shrink-0">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FF911A" strokeWidth="3">
@@ -737,10 +659,10 @@ export default function VendasPage() {
           {/* CTA Button */}
           <div className="mt-10 text-center">
             <button
-              onClick={() => handleCheckout(selectedPlan)}
+              onClick={() => handleCheckout('annual')}
               className="w-full md:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#FF911A] to-orange-500 hover:from-[#e87f0f] hover:to-orange-600 text-white font-bold text-[16px] md:text-[18px] px-12 py-5 rounded-full shadow-lg shadow-[#FF911A]/30 transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
-              {selectedPlan === 'annual' ? 'GARANTIR PLANO ANUAL' : 'GARANTIR PLANO MENSAL'}
+              GARANTIR PLANO ANUAL
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
